@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EFBPlayerController : MonoBehaviour
 {
+
+    [SerializeField] private GameObject bullet; 
+    [SerializeField] private Transform bulletDir;
     private EFBActions controls;
 
     private void Awake()
@@ -22,7 +25,15 @@ public class EFBPlayerController : MonoBehaviour
     }
     void Start()
     {
-        
+        controls.Player.Shoot.performed += ctx => PlayerShoot();
+    }
+
+    private void PlayerShoot()
+    {
+        Vector2 mousePosition = controls.Player.MousePosition.ReadValue<Vector2>();
+        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        GameObject g = Instantiate(bullet, bulletDir.position, bulletDir.rotation);
+        g.SetActive(true);
     }
 
     // Update is called once per frame
