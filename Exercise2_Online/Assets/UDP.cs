@@ -17,7 +17,8 @@ public class UDP : MonoBehaviour
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); //IPAddress.Any
+        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // PARA LOCAL, IP local
+        ipep = new IPEndPoint(IPAddress.Any, 6879); // un puerto para el host, IPAddress.Any
         newSocket.Bind(ipep);
         // ini cializar data
         data = new byte[10];

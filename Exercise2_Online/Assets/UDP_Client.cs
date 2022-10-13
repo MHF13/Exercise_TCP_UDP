@@ -16,9 +16,11 @@ public class UDP_Client : MonoBehaviour
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6878); // IPAddress.Any
+        ipep = new IPEndPoint(IPAddress.Any, 6799); // IPAddress.Any, puerto del cliente
+        //ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6799); // PARA LOCAL, puerto del cliente
         newSocket.Bind(ipep);
-        Remote = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // IP del servidor, puerto del servidor
+        Remote = new IPEndPoint(IPAddress.Parse("10.0.103.30"), 6879); // IP del servidor, puerto del servidor
+        //Remote = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // PARA LOCAL IP del servidor, puerto del servidor
 
         data = Encoding.ASCII.GetBytes("hola");
     }
