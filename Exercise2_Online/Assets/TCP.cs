@@ -18,7 +18,7 @@ public class TCP : MonoBehaviour
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("10.0.103.16"), 0);
+        IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("10.0.103.30"), 0); 
 
         newSocket.Bind(ipep);
 
