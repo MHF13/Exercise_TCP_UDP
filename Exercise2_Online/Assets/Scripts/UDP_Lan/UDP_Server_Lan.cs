@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using System.Threading;
 
-public class UDP : MonoBehaviour
+public class UDP_Server_Lan : MonoBehaviour
 {
     Socket newSocket;
     IPEndPoint ipep;
@@ -17,7 +17,6 @@ public class UDP : MonoBehaviour
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // PARA LOCAL, IP local
         ipep = new IPEndPoint(IPAddress.Any, 6879); // un puerto para el host, IPAddress.Any
         newSocket.Bind(ipep);
         // ini cializar data
@@ -34,9 +33,7 @@ public class UDP : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int a = 1;
-        a = 2;
-        int b = a;
+
     }
 
     private void LoopFunction()
@@ -51,8 +48,4 @@ public class UDP : MonoBehaviour
             Debug.Log(str);
         }
     }
-
-    // En un acorrutina
-    //recv = newSocket.ReceiveFrom(data, ref Remote);
-    //
 }
