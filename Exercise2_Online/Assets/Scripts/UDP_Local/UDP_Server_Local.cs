@@ -41,6 +41,7 @@ public class UDP_Server_Local : MonoBehaviour
         while (true)
         {
             Debug.Log("Thread");
+            data = new byte[data.Length];
             recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);

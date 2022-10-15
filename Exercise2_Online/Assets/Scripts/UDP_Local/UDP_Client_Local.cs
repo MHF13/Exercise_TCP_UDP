@@ -35,6 +35,7 @@ public class UDP_Client_Local : MonoBehaviour
         {
             Debug.Log("Se envia");
 
+            //data = new byte[data.Length];
             data = Encoding.ASCII.GetBytes(message);
 
             newSocket.SendTo(data, data.Length, SocketFlags.None, Remote);
