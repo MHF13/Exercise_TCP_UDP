@@ -13,6 +13,12 @@ public class UDP_Server_Local : MonoBehaviour
     byte[] data;
     int recv;
     EndPoint Client;
+
+    List <EndPoint> ClientList;
+
+    [SerializeField]
+    private GameObject Chat;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +31,7 @@ public class UDP_Server_Local : MonoBehaviour
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         Client = (EndPoint)(sender);
 
-        Thread thread = new Thread(LoopFunction);
+        Thread thread = new Thread(RecieveClients);
 
         thread.Start();
     }
@@ -36,17 +42,38 @@ public class UDP_Server_Local : MonoBehaviour
 
     }
 
-    private void LoopFunction()
+    private void RecieveClients()
     {
         while (true)
         {
-            Debug.Log("Thread");
             data = new byte[data.Length];
             recv = newSocket.ReceiveFrom(data, ref Client);
 
-            string str = Encoding.ASCII.GetString(data);
+            bool newClient = true;
 
-            Debug.Log(str);
+            for (int i = 0; i < ClientList.Count; i++){
+                if (Client == ClientList[i])
+                    newClient = false;
+            }
+
+            if (newClient){
+                string str = Encoding.ASCII.GetString(data);
+
+                ClientList.Add(Client);
+
+                //enviar confirmacion al cliente
+                byte[] invitation;
+                invitation = Encoding.ASCII.GetBytes("Can Join");
+                newSocket.SendTo(invitation, invitation.Length, SocketFlags.None, Client);
+
+            }
+            else
+            {
+
+            }
         }
     }
+
+
+
 }
