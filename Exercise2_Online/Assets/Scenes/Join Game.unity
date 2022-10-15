@@ -445,6 +445,7 @@ MonoBehaviour:
   userNameText: {fileID: 1336794058}
   joinChatPanel: {fileID: 236848802}
   theChatPanel: {fileID: 827574160}
+  theChat: {fileID: 0}
   message: {fileID: 0}
 --- !u!4 &363610407
 Transform:
@@ -701,13 +702,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 363610406}
+        m_TargetAssemblyTypeName: UDP_Client_Local, Assembly-CSharp
+        m_MethodName: SEND
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -788,10 +789,10 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -311.07996, y: -103.44}
-  m_SizeDelta: {x: -622.1573, y: -206.8712}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300.8427, y: 312.12878}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &827574162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2072,7 +2073,7 @@ GameObject:
   - component: {fileID: 1421859318}
   - component: {fileID: 1421859317}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: OnlineChat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2118,58 +2119,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'wqewaer
+  m_text: 'aSDasd
 
-    asdasdasd
+    ASDsad
 
-    sad
-
-    as
-
-    d
-
-    asdasdas
-
-    das
-
-    dsadasdasd
-
-    asd
-
-    asdasdasd
-
-    asd
-
-    as
-
-    da
-
-    sd
-
-    sadasdasd
-
-
-    asdasdas
-
-    das
-
-    d
-
-    sad
-
-    asd
-
-    as
-
-    d
-
-    asd
-
-    as
-
-    d
-
-    asd'
+    ASDsad'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2493,7 +2447,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.29318237, y: 19}
+  m_AnchoredPosition: {x: -0.2932129, y: 19}
   m_SizeDelta: {x: -10.444, y: -58.0473}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1593222023
@@ -3102,4 +3056,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6858b185815424abbb10a118c10c5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Chat: {fileID: 827574160}
+  Chat: {fileID: 1421859315}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using System.Threading;
 
@@ -14,10 +15,13 @@ public class UDP_Server_Local : MonoBehaviour
     int recv;
     EndPoint Client;
 
-    List <EndPoint> ClientList;
+    EndPoint ClientList;
 
     [SerializeField]
     private GameObject Chat;
+
+    bool updateText;
+    string newText;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +31,8 @@ public class UDP_Server_Local : MonoBehaviour
         newSocket.Bind(ipep);
         // ini cializar data
         data = new byte[255];
+
+        updateText = false;
 
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         Client = (EndPoint)(sender);
@@ -39,7 +45,17 @@ public class UDP_Server_Local : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (updateText)
+        {
+            Debug.Log("Modifica Texto");
+            string text = Chat.GetComponent<TextMeshProUGUI>().text;
+            text += "\n" + newText;
 
+            Debug.Log(text);
+            updateText = false;
+
+            Chat.GetComponent<TextMeshProUGUI>().SetText(text);
+        }
     }
 
     private void RecieveClients()
@@ -49,17 +65,23 @@ public class UDP_Server_Local : MonoBehaviour
             data = new byte[data.Length];
             recv = newSocket.ReceiveFrom(data, ref Client);
 
+            string str = Encoding.ASCII.GetString(data);
+
             bool newClient = true;
-
-            for (int i = 0; i < ClientList.Count; i++){
-                if (Client == ClientList[i])
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == ':')
+                {
                     newClient = false;
+                }
             }
-
+            
             if (newClient){
-                string str = Encoding.ASCII.GetString(data);
 
-                ClientList.Add(Client);
+                ClientList = Client;
+
+                Debug.Log("Recive el usuario");
+
 
                 //enviar confirmacion al cliente
                 byte[] invitation;
@@ -69,6 +91,10 @@ public class UDP_Server_Local : MonoBehaviour
             }
             else
             {
+                //Nuevo mensage
+                Debug.Log("Nuevo mensage");
+                newText = str + "\n";
+                updateText = true;
 
             }
         }

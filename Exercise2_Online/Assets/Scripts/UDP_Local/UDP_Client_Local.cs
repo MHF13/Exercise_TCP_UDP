@@ -13,7 +13,7 @@ public class UDP_Client_Local : MonoBehaviour
     IPEndPoint ipep;
     byte[] data;
     int recv;
-    EndPoint Remote;
+    EndPoint Server;
     private string userName;
 
     //Para el online
@@ -24,26 +24,28 @@ public class UDP_Client_Local : MonoBehaviour
     private GameObject joinChatPanel;
     [SerializeField]
     private GameObject theChatPanel;
-
+    [SerializeField]
+    private GameObject theChat;
 
     public TMP_InputField message;
 
     bool openChat = false;
 
     Thread CurrentThread;
+    Thread ReciveThread;
 
     // Start is called before the first frame update
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6799); // PARA LOCAL, puerto del cliente
+        ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6800); // PARA LOCAL, puerto del cliente
         newSocket.Bind(ipep);
-        Remote = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // PARA LOCAL IP del servidor, puerto del servidor
+        Server = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6879); // PARA LOCAL IP del servidor, puerto del servidor
 
         data = new byte[255];
 
-        CurrentThread = new Thread(Reciver);
-        CurrentThread.Start();
+        ReciveThread = new Thread(Reciver);
+        ReciveThread.Start();
 
         message = theChatPanel.GetComponentInChildren<TMP_InputField>();
 
@@ -57,6 +59,9 @@ public class UDP_Client_Local : MonoBehaviour
         if (openChat)
         {
             OpenChat();
+            ReciveThread.Abort();
+            CurrentThread = new Thread(InChat);
+            CurrentThread.Start();
             openChat = false;
         }
 
@@ -70,38 +75,37 @@ public class UDP_Client_Local : MonoBehaviour
         data = new byte[data.Length];
         data = Encoding.ASCII.GetBytes(userNameText.text);
 
-        newSocket.SendTo(data, data.Length, SocketFlags.None, Remote);
+        newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
     }
 
     public void SEND()
     {
-        data = new byte[data.Length];
-        data = Encoding.ASCII.GetBytes(message.text);
 
-        newSocket.SendTo(data, data.Length, SocketFlags.None, Remote);
+        Debug.Log("SEND");
+        data = new byte[data.Length];
+
+        string nameMessage = "[" + userName + "]:" + message.text;
+
+        data = Encoding.ASCII.GetBytes(nameMessage);
+
+        newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
     }
 
     private void Reciver()
     {
-
+        data = new byte[255];
         data = new byte[data.Length];
-        recv = newSocket.ReceiveFrom(data, ref Remote);
+        recv = newSocket.ReceiveFrom(data, ref Server);
         string str = Encoding.ASCII.GetString(data);
 
         Debug.Log("Invitacion recivida");
 
-        CurrentThread.Abort();
-
-
-        CurrentThread = new Thread(InChat);
-        CurrentThread.Start();
-
-
         openChat = true;
-        
+
         Debug.Log(str);
+        
     }
 
     private void OpenChat()
@@ -114,7 +118,14 @@ public class UDP_Client_Local : MonoBehaviour
     {
         while (true)
         {
+            Debug.Log("InChat");
 
+            data = new byte[255];
+            data = new byte[data.Length];
+            recv = newSocket.ReceiveFrom(data, ref Server);
+            string str = Encoding.ASCII.GetString(data);
+            openChat = true;
+            Debug.Log(str);
         }
     }
 
