@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TMPro;
 
 
 public class Client : MonoBehaviour
@@ -18,18 +19,19 @@ public class Client : MonoBehaviour
     Socket server;
     EndPoint remote;
 
-    public GameObject adressInputText;
-    public GameObject userNameText;
-    public GameObject serverTalk;
+    public GameObject adressInputGO;
+    public GameObject userNameGO;
+    public GameObject IPUButton;
+    public GameObject chat;
+    public GameObject chatButton;
 
-    Thread ReceiveThread;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public TMP_InputField adressInput;
+    public TMP_InputField usernameInput;
+    public TMP_InputField chatInput;
 
-    // Update is called once per frame
+
+    Thread SendThread;
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
@@ -39,7 +41,7 @@ public class Client : MonoBehaviour
         }
     }
 
-    private void Receiver()
+    private void Send()
     {
         data = new byte[1024];
         recv = server.ReceiveFrom(data, ref remote);
@@ -50,31 +52,21 @@ public class Client : MonoBehaviour
         Debug.Log(Encoding.ASCII.GetString(data, 0, recv));
     }
 
-    public void ReadStringText(string s)
+    public void SendUserName(string s)
     {
-        input = s;
-        userNameText.SetActive(false);
-        serverTalk.SetActive(true);
-
-        ReceiveThread = new Thread(Receiver);
-        ReceiveThread.Start();
+        string userName = s;
+        data = Encoding.ASCII.GetBytes(s);
+        server.SendTo(data, data.Length, SocketFlags.None, ipep);
     }
 
-    public void ReadIPAdress(string IPA)
+    public void SendIPAdress(string IPA)
     {
         data = new byte[1024];
         ipep = new IPEndPoint(IPAddress.Parse(IPA), 9050);
         server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        string welcome = "Hello, are you there?";
-        data = Encoding.ASCII.GetBytes(welcome);
-        server.SendTo(data, data.Length, SocketFlags.None, ipep);
-
         sender = new IPEndPoint(IPAddress.Any, 0);
         remote = (EndPoint)sender;
-
-        adressInputText.SetActive(false);
-        userNameText.SetActive(true);
     }
 
     public void SendMessageToServer(string msg)
@@ -84,5 +76,26 @@ public class Client : MonoBehaviour
         recv = server.ReceiveFrom(data, ref remote);
         stringData = Encoding.ASCII.GetString(data, 0, recv);
         Debug.Log(stringData);
+    }
+
+    public void SendUserAndIP()
+    {
+        SendIPAdress(adressInput.text);
+        SendUserName(usernameInput.text);
+
+        adressInputGO.SetActive(false);
+        userNameGO.SetActive(false);
+        IPUButton.SetActive(false);
+
+        SendThread = new Thread(Send);
+        SendThread.Start();
+
+        chat.SetActive(true);
+        chatButton.SetActive(true);
+    }
+
+    public void SendMessage()
+    {
+        SendMessageToServer(chatInput.text);
     }
 }
