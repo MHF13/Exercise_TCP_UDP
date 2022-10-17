@@ -55,6 +55,12 @@ public class UDP_Server_Local : MonoBehaviour
             updateText = false;
 
             Chat.GetComponent<TextMeshProUGUI>().SetText(text);
+
+            byte[] textChat;
+            textChat = Encoding.ASCII.GetBytes(text);
+
+            newSocket.SendTo(textChat, textChat.Length, SocketFlags.None, Client);
+
         }
     }
 
