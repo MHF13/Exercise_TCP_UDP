@@ -363,8 +363,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UDP_Client_Local, Assembly-CSharp
+      - m_Target: {fileID: 1409383366}
+        m_TargetAssemblyTypeName: UDP_Server_Lan, Assembly-CSharp
         m_MethodName: SEND
         m_Mode: 1
         m_Arguments:
@@ -2009,8 +2009,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UDP_Client_Local, Assembly-CSharp
+      - m_Target: {fileID: 1409383366}
+        m_TargetAssemblyTypeName: UDP_Server_Lan, Assembly-CSharp
         m_MethodName: Button
         m_Mode: 1
         m_Arguments:
