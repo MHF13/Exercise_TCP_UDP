@@ -70,12 +70,15 @@ public class UDP_Client_Lan : MonoBehaviour
     }
 
     private void UpdateText(){
-
+        
         OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
         allText = newText;
-        
+
+        Debug.Log("Update del texto\n" + allText);
+
         updateText = false;
     }
+    
     public void Button()
     {
 
@@ -92,11 +95,14 @@ public class UDP_Client_Lan : MonoBehaviour
     public void SEND()
     {
 
-        Debug.Log("Enviar Texto");
         data = new byte[255];
         newMessage = "\n[" + userName + "]:" + message.text;
+        
+        Debug.Log("Enviar Texto\n"+ newMessage);
 
         data = Encoding.ASCII.GetBytes(newMessage);
+
+        
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
     }
@@ -124,16 +130,16 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void InChat()
     {
-        Debug.Log("Thread esperando texto");
+        Debug.Log("Thread esperando recivir mensage");
 
         while (true)
         {
             data = new byte[255];
             recv = newSocket.ReceiveFrom(data, ref Server);
 
-            Debug.Log("Texto modificado recibido");
-
             newMessage = Encoding.ASCII.GetString(data);
+            Debug.Log("mensage nuevo recibido\n"+newMessage);
+            
             newText = allText + newMessage;
 
             updateText = true;
