@@ -124,7 +124,6 @@ public class UDP_Client_Local : MonoBehaviour
             data = new byte[data.Length];
             recv = newSocket.ReceiveFrom(data, ref Server);
             string str = Encoding.ASCII.GetString(data);
-            openChat = true;
             Debug.Log(str);
         }
     }

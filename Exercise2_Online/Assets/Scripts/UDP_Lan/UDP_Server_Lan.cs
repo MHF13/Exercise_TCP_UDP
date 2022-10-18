@@ -43,7 +43,7 @@ public class UDP_Server_Lan : MonoBehaviour
         newSocket.Bind(ipep);
 
         // inicializar data
-        data = new byte[10];
+        data = new byte[255];
         // inicializar Client
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         Client = (EndPoint)(sender);
@@ -58,34 +58,41 @@ public class UDP_Server_Lan : MonoBehaviour
     {
         if (updateText)
         {
-            Debug.Log("Modifica Texto");
-            string text = OnlineChat.GetComponent<TextMeshProUGUI>().text;
-            text += newText;
-
-            Debug.Log(text);
-
-            OnlineChat.GetComponent<TextMeshProUGUI>().SetText(text);
-            updateText = false;
-
+            UpdateText();
         }
+    }
+
+    private void UpdateText(){
+
+        Debug.Log("Texto Modificado");
+        string text = OnlineChat.GetComponent<TextMeshProUGUI>().text;
+        text += newText;
+
+        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(text);
+
+        data = new byte[data.Length];
+        data = Encoding.ASCII.GetBytes(text);
+        newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
+
+        updateText = false;
     }
 
     public void SEND()
     {
 
-        Debug.Log("SEND");
+        Debug.Log("Server envia mensage");
         data = new byte[data.Length];
 
         string nameMessage = "[" + userName + "]:" + message.text;
 
         string text = OnlineChat.GetComponent<TextMeshProUGUI>().text;
-        text += "\n" + nameMessage;
+        text += nameMessage;
 
         newText = text + "\n";
-
         updateText = true;
 
     }
+
     public void Button()
     {
         userName = userNameText.text;
@@ -120,7 +127,6 @@ public class UDP_Server_Lan : MonoBehaviour
 
                 Debug.Log("Recive el usuario");
 
-
                 //enviar confirmacion al cliente
                 byte[] invitation;
                 invitation = Encoding.ASCII.GetBytes("Can Join");
@@ -130,7 +136,7 @@ public class UDP_Server_Lan : MonoBehaviour
             else
             {
                 //Nuevo mensage
-                Debug.Log("Nuevo mensage");
+                Debug.Log("Nuevo mensage Recivido");
                 newText = str + "\n";
                 updateText = true;
 
