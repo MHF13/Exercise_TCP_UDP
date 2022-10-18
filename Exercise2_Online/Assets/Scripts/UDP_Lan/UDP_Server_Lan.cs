@@ -83,7 +83,7 @@ public class UDP_Server_Lan : MonoBehaviour
         Debug.Log("Server envia mensage");
         data = new byte[255];
 
-        newMessage = "/n[" + userName + "]:" + message.text;
+        newMessage = "\n[" + userName + "]:" + message.text;
 
         allText = OnlineChat.GetComponent<TextMeshProUGUI>().text;
 

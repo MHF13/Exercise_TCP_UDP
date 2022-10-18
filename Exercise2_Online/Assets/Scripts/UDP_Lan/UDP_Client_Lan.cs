@@ -35,8 +35,9 @@ public class UDP_Client_Lan : MonoBehaviour
     Thread ReciveThread;
 
     string allText;
-
     string newText;
+    string newMessage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -93,9 +94,9 @@ public class UDP_Client_Lan : MonoBehaviour
 
         Debug.Log("Enviar Texto");
         data = new byte[255];
-        string nameMessage = "/n[" + userName + "]:" + message.text;
+        newMessage = "\n[" + userName + "]:" + message.text;
 
-        data = Encoding.ASCII.GetBytes(nameMessage);
+        data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
     }
