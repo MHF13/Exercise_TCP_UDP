@@ -30,10 +30,13 @@ public class UDP_Client_Lan : MonoBehaviour
     public TMP_InputField message;
 
     bool openChat = false;
-
+    bool updateText = false;
     Thread CurrentThread;
     Thread ReciveThread;
 
+    string allText;
+
+    string newText;
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +49,10 @@ public class UDP_Client_Lan : MonoBehaviour
         Server = new IPEndPoint(IPAddress.Any, 0);
 
         data = Encoding.ASCII.GetBytes("hola");
+
+        ReciveThread = new Thread(Reciver);
+
+        ReciveThread.Start();
     }
 
     // Update is called once per frame
@@ -55,16 +62,26 @@ public class UDP_Client_Lan : MonoBehaviour
         {
             OpenChat();
         }
+        if(updateText){
+            UpdateText();
+        }
 
     }
 
+    private void UpdateText(){
+
+
+        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(allText);
+
+        updateText = false;
+    }
     public void Button()
     {
 
         Server = new IPEndPoint(IPAddress.Parse(IpServerText.text), 6879);
         userName = userNameText.text;
 
-        data = new byte[data.Length];
+        data = new byte[255];
         data = Encoding.ASCII.GetBytes(userNameText.text);
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
@@ -75,8 +92,7 @@ public class UDP_Client_Lan : MonoBehaviour
     {
 
         Debug.Log("Enviar Texto");
-        data = new byte[data.Length];
-
+        data = new byte[255];
         string nameMessage = "[" + userName + "]:" + message.text;
 
         data = Encoding.ASCII.GetBytes(nameMessage);
@@ -86,11 +102,11 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void Reciver()
     {
-        data = new byte[data.Length];
+        data = new byte[255];
         recv = newSocket.ReceiveFrom(data, ref Server);
         string str = Encoding.ASCII.GetString(data);
 
-        Debug.Log("Invitacion recivida");
+        Debug.Log("Invitacion recibida");
         openChat = true;
 
     }
@@ -107,16 +123,20 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void InChat()
     {
+        Debug.Log("Thread esperando texto");
+
         while (true)
         {
-            data = new byte[data.Length];
+            data = new byte[255];
             recv = newSocket.ReceiveFrom(data, ref Server);
 
-            Debug.Log("Texto modificado recivido");
+            Debug.Log("Texto modificado recibido");
 
-            string str = Encoding.ASCII.GetString(data);
+            newText = Encoding.ASCII.GetString(data);
 
-            OnlineChat.GetComponent<TextMeshProUGUI>().SetText(str);
+            allText += newText; 
+
+            updateText = true;
         }
     }
 

@@ -20,8 +20,9 @@ public class UDP_Server_Lan : MonoBehaviour
     private string userName;
 
     bool updateText;
-    string newText;
-
+    string allText; // Chat Actual
+    string newText; // Chat con el nuevo mensaje
+    string newMessage; // Mensage que llega o se escribe
 
     //Para el online
     public TMP_InputField userNameText;
@@ -65,15 +66,14 @@ public class UDP_Server_Lan : MonoBehaviour
     private void UpdateText(){
 
         Debug.Log("Texto Modificado");
-        string text = OnlineChat.GetComponent<TextMeshProUGUI>().text;
-        text += newText;
-
-        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(text);
-
-        data = new byte[data.Length];
-        data = Encoding.ASCII.GetBytes(text);
+        
+        data = new byte[255];
+        data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
 
+        allText = newText;
+
+        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(allText);
         updateText = false;
     }
 
@@ -81,14 +81,14 @@ public class UDP_Server_Lan : MonoBehaviour
     {
 
         Debug.Log("Server envia mensage");
-        data = new byte[data.Length];
+        data = new byte[255];
 
-        string nameMessage = "[" + userName + "]:" + message.text;
+        newMessage = "[" + userName + "]:" + message.text;
 
-        string text = OnlineChat.GetComponent<TextMeshProUGUI>().text;
-        text += nameMessage;
+        allText = OnlineChat.GetComponent<TextMeshProUGUI>().text;
 
-        newText = text + "\n";
+        newText = allText + newMessage;
+
         updateText = true;
 
     }
@@ -106,7 +106,7 @@ public class UDP_Server_Lan : MonoBehaviour
     {
         while (true)
         {
-            data = new byte[data.Length];
+            data = new byte[255];
             recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);
@@ -137,7 +137,10 @@ public class UDP_Server_Lan : MonoBehaviour
             {
                 //Nuevo mensage
                 Debug.Log("Nuevo mensage Recivido");
-                newText = str + "\n";
+
+                newMessage = str;
+
+                newText = allText + str;
                 updateText = true;
 
             }
