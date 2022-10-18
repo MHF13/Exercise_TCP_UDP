@@ -71,9 +71,10 @@ public class UDP_Server_Lan : MonoBehaviour
         data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
 
-        allText = newText;
+        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
 
-        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(allText);
+        allText = newText;
+        
         updateText = false;
     }
 
@@ -138,9 +139,10 @@ public class UDP_Server_Lan : MonoBehaviour
                 //Nuevo mensage
                 Debug.Log("Nuevo mensage Recivido");
 
+                newText = allText + str;
+
                 newMessage = str;
 
-                newText = allText + newMessage;
                 updateText = true;
 
             }

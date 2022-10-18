@@ -71,9 +71,9 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void UpdateText(){
 
-
-        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(allText);
-
+        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
+        allText = newText;
+        
         updateText = false;
     }
     public void Button()
@@ -133,9 +133,8 @@ public class UDP_Client_Lan : MonoBehaviour
 
             Debug.Log("Texto modificado recibido");
 
-            newText = Encoding.ASCII.GetString(data);
-
-            allText += newText; 
+            newMessage = Encoding.ASCII.GetString(data);
+            newText = allText + newMessage;
 
             updateText = true;
         }
