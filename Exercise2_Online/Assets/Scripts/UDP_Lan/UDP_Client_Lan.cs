@@ -93,7 +93,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
         Debug.Log("Enviar Texto");
         data = new byte[255];
-        string nameMessage = "[" + userName + "]:" + message.text;
+        string nameMessage = "/n[" + userName + "]:" + message.text;
 
         data = Encoding.ASCII.GetBytes(nameMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
