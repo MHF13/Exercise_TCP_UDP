@@ -139,12 +139,12 @@ public class UDP_Server_Lan : MonoBehaviour
             else
             {
                 //Nuevo mensage
-                Debug.Log("Nuevo mensage Recivido\n" + str);
+                Debug.Log("Nuevo mensage Recivido" + str);
 
                 newText = allText + str;
 
                 newMessage = str;
-                Debug.Log("Nuevo mensage Recivido\n" + newMessage);
+                Debug.Log("Nuevo mensage Recivido" + newMessage);
 
 
                 updateText = true;

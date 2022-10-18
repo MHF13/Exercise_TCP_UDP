@@ -78,7 +78,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
         updateText = false;
     }
-    
+
     public void Button()
     {
 
@@ -98,7 +98,7 @@ public class UDP_Client_Lan : MonoBehaviour
         data = new byte[255];
         newMessage = "\n[" + userName + "]:" + message.text;
         
-        Debug.Log("Enviar Texto\n"+ newMessage);
+        Debug.Log("Enviar Texto"+ newMessage);
 
         data = Encoding.ASCII.GetBytes(newMessage);
 
@@ -138,7 +138,7 @@ public class UDP_Client_Lan : MonoBehaviour
             recv = newSocket.ReceiveFrom(data, ref Server);
 
             newMessage = Encoding.ASCII.GetString(data);
-            Debug.Log("mensage nuevo recibido\n"+newMessage);
+            Debug.Log("mensage nuevo recibido"+newMessage);
             
             newText = allText + newMessage;
 
