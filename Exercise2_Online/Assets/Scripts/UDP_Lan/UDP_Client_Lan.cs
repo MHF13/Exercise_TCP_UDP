@@ -71,6 +71,8 @@ public class UDP_Client_Lan : MonoBehaviour
 
         Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
 
+        Debug.Log(OnlineChat.GetComponent<TextMeshProUGUI>().text + messages[messages.Count - 1]);
+
         OnlineChat.GetComponent<TextMeshProUGUI>().text += messages[messages.Count - 1];
 
         Debug.Log("Texto despues\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
