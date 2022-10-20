@@ -55,7 +55,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
         messages = new List<string>();
 
-        ReciveThread = new Thread(Reciver);
+        ReciveThread = new Thread(Receiver);
 
         ReciveThread.Start();
     }
@@ -88,7 +88,7 @@ public class UDP_Client_Lan : MonoBehaviour
         updateText = false;
     }
 
-    public void Button()
+    public void IPUserNameButton()
     {
 
         Server = new IPEndPoint(IPAddress.Parse(IpServerText.text), 6879);
@@ -101,7 +101,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
     }
 
-    public void SEND()
+    public void SendButton()
     {
 
         byte[] data = new byte[255];
@@ -115,7 +115,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
     }
 
-    private void Reciver()
+    private void Receiver()
     {
 
         byte[] data = new byte[255];
@@ -142,13 +142,13 @@ public class UDP_Client_Lan : MonoBehaviour
 
         while (true)
         {
-            Debug.Log("Thread esperando recivir mensage");
+            Debug.Log("Thread esperando recibir mensage");
 
             byte[] data = new byte[255];
             recv = newSocket.ReceiveFrom(data, ref Server);
 
             string newMessage = Encoding.ASCII.GetString(data);
-            Debug.Log("mensage nuevo recibido: " + newMessage);
+            Debug.Log("Mensaje nuevo recibido: " + newMessage);
             
             //TODO: Contar los caracteres de los mensages recibidos
             //Si Hay 1 mas, borrar el ultimo caracter 

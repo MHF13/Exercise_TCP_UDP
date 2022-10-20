@@ -704,7 +704,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 363610408}
         m_TargetAssemblyTypeName: UDP_Client_Lan, Assembly-CSharp
-        m_MethodName: SEND
+        m_MethodName: SendButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -917,7 +917,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 363610408}
         m_TargetAssemblyTypeName: UDP_Client_Lan, Assembly-CSharp
-        m_MethodName: Button
+        m_MethodName: IPUserNameButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2931,7 +2931,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Enter Server
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2958,8 +2958,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0

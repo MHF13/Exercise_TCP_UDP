@@ -49,7 +49,7 @@ public class UDP_Server_Lan : MonoBehaviour
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         Client = (EndPoint)(sender);
 
-        Thread thread = new Thread(RecieveClients);
+        Thread thread = new Thread(ReceieveClients);
 
         thread.Start();
     }
@@ -80,13 +80,13 @@ public class UDP_Server_Lan : MonoBehaviour
         updateText = false;
     }
 
-    public void SEND()
+    public void SendButton()
     {
 
         data = new byte[255];
 
         newMessage = "\n[" + userName + "]:" + message.text;
-        Debug.Log("Server envia mensage: " + newMessage);
+        Debug.Log("Server envia mensaje: " + newMessage);
 
         allText = OnlineChat.GetComponent<TextMeshProUGUI>().text;
 
@@ -96,7 +96,7 @@ public class UDP_Server_Lan : MonoBehaviour
 
     }
 
-    public void Button()
+    public void UserNameButton()
     {
         userName = userNameText.text;
 
@@ -105,7 +105,7 @@ public class UDP_Server_Lan : MonoBehaviour
 
     }
 
-    private void RecieveClients()
+    private void ReceieveClients()
     {
         while (true)
         {
@@ -128,7 +128,7 @@ public class UDP_Server_Lan : MonoBehaviour
 
                 ClientList = Client;
 
-                Debug.Log("Recive el usuario");
+                Debug.Log("Recibe el usuario");
 
                 //enviar confirmacion al cliente
                 byte[] invitation;
@@ -139,12 +139,12 @@ public class UDP_Server_Lan : MonoBehaviour
             else
             {
                 //Nuevo mensage
-                Debug.Log("(Servidor)Nuevo mensage Recivido: " + str);
+                Debug.Log("(Servidor)Nuevo mensaje Recivido: " + str);
 
                 newText = allText + str;
 
                 newMessage = str;
-                Debug.Log("Nuevo mensage Recivido: " + newMessage);
+                Debug.Log("Nuevo mensaje Recivido: " + newMessage);
 
 
                 updateText = true;
