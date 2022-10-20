@@ -150,6 +150,10 @@ public class UDP_Client_Lan : MonoBehaviour
             string newMessage = Encoding.ASCII.GetString(data);
             Debug.Log("mensage nuevo recibido: " + newMessage);
             
+            //TODO: Contar los caracteres de los mensages recibidos
+            //Si Hay 1 mas, borrar el ultimo caracter 
+
+
             messages.Add(newMessage);
 
             updateText = true;
