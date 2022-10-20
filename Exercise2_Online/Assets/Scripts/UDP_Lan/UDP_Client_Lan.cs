@@ -71,6 +71,7 @@ public class UDP_Client_Lan : MonoBehaviour
 
         Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
 
+        Debug.Log("Este deveria ser el nuevo texto");
         Debug.Log(OnlineChat.GetComponent<TextMeshProUGUI>().text + messages[messages.Count - 1]);
 
         OnlineChat.GetComponent<TextMeshProUGUI>().text += messages[messages.Count - 1];
@@ -129,23 +130,37 @@ public class UDP_Client_Lan : MonoBehaviour
 
         while (true)
         {
+            string newMessage2 = "";
             byte[] data = new byte[255];
 
             int rev = newSocket.ReceiveFrom(data,ref Server);
 
             string newMessage = Encoding.ASCII.GetString(data);
 
-            Debug.Log("Mensaje nuevo recibido: " + newMessage);
+            for (int i = 0; i < newMessage.Length; i++)
+            {
+                if (newMessage[i] != 0)
+                {
+                    newMessage2 += newMessage[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            Debug.Log("Mensaje nuevo recibido: " + newMessage2);
 
             Debug.Log("caracteres recividos: ");
             Debug.Log(newMessage.Length);
+            Debug.Log("caracteres nuevos: ");
+            Debug.Log(newMessage2.Length);
 
 
             //TODO: Contar los caracteres de los mensages recibidos
             //Si Hay 1 mas, borrar el ultimo caracter 
 
-            messages.Add(newMessage);
-
+            messages.Add(newMessage2);
             updateText = true;
         }
     }

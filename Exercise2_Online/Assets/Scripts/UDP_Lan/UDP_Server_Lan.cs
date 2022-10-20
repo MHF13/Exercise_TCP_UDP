@@ -11,7 +11,6 @@ public class UDP_Server_Lan : MonoBehaviour
 {
     Socket newSocket;
     IPEndPoint ipep;
-    byte[] data;
     EndPoint Client;
 
     EndPoint ClientList;
@@ -20,7 +19,6 @@ public class UDP_Server_Lan : MonoBehaviour
 
     bool updateText;
     string allText; // Chat Actual
-    string newText; // Chat con el nuevo mensaje
     string newMessage; // Mensage que llega o se escribe
 
     //Para el online
@@ -42,8 +40,6 @@ public class UDP_Server_Lan : MonoBehaviour
         ipep = new IPEndPoint(IPAddress.Any, 8000); // un puerto para el host, IPAddress.Any
         newSocket.Bind(ipep);
 
-        // inicializar data
-        data = new byte[255];
         // inicializar Client
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         Client = (EndPoint)(sender);
@@ -66,34 +62,24 @@ public class UDP_Server_Lan : MonoBehaviour
 
         Debug.Log("Texto Modificado");
         
-        data = new byte[newMessage.Length];
+        byte[] data = new byte[255];
         data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
 
-        Debug.Log("Texto Enviado a Cliente\n" + newMessage);
+        Debug.Log("Texto Enviado a Cliente" + newMessage);
 
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
 
-        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
-
-        allText = newText;
-        
         updateText = false;
     }
 
     public void SendButton()
     {
-
-        data = new byte[255];
-
+        newMessage = "";
         newMessage = "\n[" + userName + "]:" + message.text;
         Debug.Log("Server envia mensaje: " + newMessage);
 
-        allText = OnlineChat.GetComponent<TextMeshProUGUI>().text;
-
-        newText = allText + newMessage;
-
         updateText = true;
-
     }
 
     public void UserNameButton()
@@ -109,7 +95,8 @@ public class UDP_Server_Lan : MonoBehaviour
     {
         while (true)
         {
-            data = new byte[255];
+            string newMessage2 = "";
+            byte[] data = new byte[255];
             int recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);
@@ -138,14 +125,23 @@ public class UDP_Server_Lan : MonoBehaviour
             }
             else
             {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (str[i] != 0)
+                    {
+                        newMessage2 += str[i];
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
                 //Nuevo mensaje
-                Debug.Log("Nuevo mensaje Recibido: " + str);
+                Debug.Log("Nuevo mensaje Recibido: " + newMessage2);
 
-                newText = allText + str;
-
-                newMessage = str;
+                newMessage = newMessage2;
                 Debug.Log("Nuevo mensaje Recibido: " + newMessage);
-
 
                 updateText = true;
 
