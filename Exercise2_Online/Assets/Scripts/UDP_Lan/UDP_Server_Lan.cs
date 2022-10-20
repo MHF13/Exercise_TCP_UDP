@@ -138,13 +138,13 @@ public class UDP_Server_Lan : MonoBehaviour
             }
             else
             {
-                //Nuevo mensage
-                Debug.Log("(Servidor)Nuevo mensaje Recivido: " + str);
+                //Nuevo mensaje
+                Debug.Log("(Servidor)Nuevo mensaje Recibido: " + str);
 
                 newText = allText + str;
 
                 newMessage = str;
-                Debug.Log("Nuevo mensaje Recivido: " + newMessage);
+                Debug.Log("Nuevo mensaje Recibido: " + newMessage);
 
 
                 updateText = true;
