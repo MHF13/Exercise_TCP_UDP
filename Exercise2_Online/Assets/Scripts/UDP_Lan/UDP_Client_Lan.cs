@@ -98,12 +98,18 @@ public class UDP_Client_Lan : MonoBehaviour
         data = new byte[255];
         newMessage = "\n[" + userName + "]:" + message.text;
         
-        Debug.Log("Enviar Texto"+ newMessage);
+        Debug.Log("Enviar Texto: "+ newMessage);
 
         data = Encoding.ASCII.GetBytes(newMessage);
 
         
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
+
+        allText = OnlineChat.GetComponent<TextMeshProUGUI>().text;
+
+        newText = allText + newMessage;
+
+        updateText = true;
 
     }
 
@@ -130,15 +136,16 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void InChat()
     {
-        Debug.Log("Thread esperando recivir mensage");
 
         while (true)
         {
+            Debug.Log("Thread esperando recivir mensage");
+
             data = new byte[255];
             recv = newSocket.ReceiveFrom(data, ref Server);
 
             newMessage = Encoding.ASCII.GetString(data);
-            Debug.Log("mensage nuevo recibido"+newMessage);
+            Debug.Log("mensage nuevo recibido: "+newMessage);
             
             newText = allText + newMessage;
 
