@@ -1,7 +1,8 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -11,7 +12,6 @@ public class UDP_Client_Lan : MonoBehaviour
 {
     Socket newSocket;
     IPEndPoint ipep;
-    int recv;
     EndPoint Server;
     private string userName;
 
@@ -33,30 +33,24 @@ public class UDP_Client_Lan : MonoBehaviour
     Thread CurrentThread;
     Thread ReciveThread;
 
-    string allText;
     string sendMessage;
 
     List<string> messages;
+    //static string newMessage;
 
     // Start is called before the first frame update
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         ipep = new IPEndPoint(IPAddress.Any, 6799); // IPAddress.Any, puerto del cliente
-
-        byte[] data = new byte[255];
-        allText = new string("");
-        
         newSocket.Bind(ipep);
+
         //Server = new IPEndPoint(IPAddress.Parse(IP_Server), 6879); // IP del servidor, puerto del servidor
         Server = new IPEndPoint(IPAddress.Any, 0);
-
-        data = Encoding.ASCII.GetBytes("hola");
 
         messages = new List<string>();
 
         ReciveThread = new Thread(Receiver);
-
         ReciveThread.Start();
     }
 
@@ -75,15 +69,11 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void UpdateText(){
 
-        string newText = allText + messages[messages.Count-1];
+        Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
 
-        OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += messages[messages.Count - 1];
 
-        allText = newText;
-
-        Debug.Log("Update del texto\n" + newText);
-
-        Debug.Log("Update del texto\n" + allText);
+        Debug.Log("Texto despues\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
 
         updateText = false;
     }
@@ -91,11 +81,12 @@ public class UDP_Client_Lan : MonoBehaviour
     public void IPUserNameButton()
     {
 
-        Server = new IPEndPoint(IPAddress.Parse(IpServerText.text), 6879);
+        Server = new IPEndPoint(IPAddress.Parse(IpServerText.text), 8000);
+        newSocket.Connect(Server);
+
         userName = userNameText.text;
 
-        byte[] data = new byte[255];
-        data = Encoding.ASCII.GetBytes(userNameText.text);
+        byte[] data = Encoding.ASCII.GetBytes(userName);
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
@@ -103,25 +94,19 @@ public class UDP_Client_Lan : MonoBehaviour
 
     public void SendButton()
     {
-
-        byte[] data = new byte[255];
         sendMessage = "\n[" + userName + "]:" + message.text;
-        
+
         Debug.Log("Enviar Texto: "+ sendMessage);
 
-        data = Encoding.ASCII.GetBytes(sendMessage);
+        byte[] data = Encoding.ASCII.GetBytes(sendMessage);
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
-
     }
 
     private void Receiver()
     {
-
-        byte[] data = new byte[255];
-        recv = newSocket.ReceiveFrom(data, ref Server);
-        string str = Encoding.ASCII.GetString(data);
-
+        byte[] recieve = new byte[255];
+        int rev = newSocket.Receive(recieve);
         Debug.Log("Invitacion recibida");
         openChat = true;
 
@@ -142,17 +127,20 @@ public class UDP_Client_Lan : MonoBehaviour
 
         while (true)
         {
-            Debug.Log("Thread esperando recibir mensage");
-
             byte[] data = new byte[255];
-            recv = newSocket.ReceiveFrom(data, ref Server);
+
+            int rev = newSocket.ReceiveFrom(data,ref Server);
 
             string newMessage = Encoding.ASCII.GetString(data);
+
             Debug.Log("Mensaje nuevo recibido: " + newMessage);
-            
+
+            Debug.Log("caracteres recividos: ");
+            Debug.Log(newMessage.Length);
+
+
             //TODO: Contar los caracteres de los mensages recibidos
             //Si Hay 1 mas, borrar el ultimo caracter 
-
 
             messages.Add(newMessage);
 

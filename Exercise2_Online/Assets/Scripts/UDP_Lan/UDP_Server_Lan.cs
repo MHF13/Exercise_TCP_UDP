@@ -12,7 +12,6 @@ public class UDP_Server_Lan : MonoBehaviour
     Socket newSocket;
     IPEndPoint ipep;
     byte[] data;
-    int recv;
     EndPoint Client;
 
     EndPoint ClientList;
@@ -40,7 +39,7 @@ public class UDP_Server_Lan : MonoBehaviour
     void Start()
     {
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Any, 6879); // un puerto para el host, IPAddress.Any
+        ipep = new IPEndPoint(IPAddress.Any, 8000); // un puerto para el host, IPAddress.Any
         newSocket.Bind(ipep);
 
         // inicializar data
@@ -67,11 +66,12 @@ public class UDP_Server_Lan : MonoBehaviour
 
         Debug.Log("Texto Modificado");
         
-        data = new byte[255];
+        data = new byte[newMessage.Length];
         data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
 
         Debug.Log("Texto Enviado a Cliente\n" + newMessage);
+
 
         OnlineChat.GetComponent<TextMeshProUGUI>().SetText(newText);
 
@@ -110,7 +110,7 @@ public class UDP_Server_Lan : MonoBehaviour
         while (true)
         {
             data = new byte[255];
-            recv = newSocket.ReceiveFrom(data, ref Client);
+            int recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);
 
@@ -139,7 +139,7 @@ public class UDP_Server_Lan : MonoBehaviour
             else
             {
                 //Nuevo mensaje
-                Debug.Log("(Servidor)Nuevo mensaje Recibido: " + str);
+                Debug.Log("Nuevo mensaje Recibido: " + str);
 
                 newText = allText + str;
 
