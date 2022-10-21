@@ -18,7 +18,8 @@ public class ButtonActions : MonoBehaviour
     }
 
 
-    public void Client(){
+    public void Client()
+    {
         SceneManager.LoadScene("Join Game");
     }
 
