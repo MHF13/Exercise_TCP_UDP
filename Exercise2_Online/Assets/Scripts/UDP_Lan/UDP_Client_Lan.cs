@@ -97,7 +97,14 @@ public class UDP_Client_Lan : MonoBehaviour
 
     public void SendButton()
     {
+
+        if(message.text == ""){
+            return;
+        }
+
         sendMessage = "\n[" + userName + "]:" + message.text;
+
+        message.text = "";
 
         Debug.Log("Enviar Texto: "+ sendMessage);
 
@@ -149,16 +156,13 @@ public class UDP_Client_Lan : MonoBehaviour
                 }
             }
 
+            /*
             Debug.Log("Mensaje nuevo recibido: " + newMessage2);
-
             Debug.Log("caracteres recividos: ");
             Debug.Log(newMessage.Length);
             Debug.Log("caracteres nuevos: ");
             Debug.Log(newMessage2.Length);
-
-
-            //TODO: Contar los caracteres de los mensages recibidos
-            //Si Hay 1 mas, borrar el ultimo caracter 
+            */
 
             messages.Add(newMessage2);
             updateText = true;

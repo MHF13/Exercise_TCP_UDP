@@ -9,11 +9,12 @@ using System.Threading;
 
 public class UDP_Server_Lan : MonoBehaviour
 {
+    
     Socket newSocket;
     IPEndPoint ipep;
     EndPoint Client;
 
-    EndPoint ClientList;
+    //EndPoint ClientList;
 
     private string userName;
 
@@ -75,9 +76,14 @@ public class UDP_Server_Lan : MonoBehaviour
 
     public void SendButton()
     {
+        if(message.text == ""){
+            return;
+        }
         newMessage = "";
         newMessage = "\n[" + userName + "]:" + message.text;
         Debug.Log("Server envia mensaje: " + newMessage);
+
+        message.text = "";
 
         updateText = true;
     }
@@ -86,6 +92,7 @@ public class UDP_Server_Lan : MonoBehaviour
     {
         userName = userNameText.text;
 
+        //Open Chat
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
 
@@ -101,31 +108,7 @@ public class UDP_Server_Lan : MonoBehaviour
 
             string str = Encoding.ASCII.GetString(data);
 
-            bool newClient = true;
             for (int i = 0; i < str.Length; i++)
-            {
-                if (str[i] == ':')
-                {
-                    newClient = false;
-                }
-            }
-
-            if (newClient)
-            {
-
-                ClientList = Client;
-
-                Debug.Log("Recibe el usuario");
-
-                //enviar confirmacion al cliente
-                byte[] invitation;
-                invitation = Encoding.ASCII.GetBytes("Can Join");
-                newSocket.SendTo(invitation, invitation.Length, SocketFlags.None, Client);
-
-            }
-            else
-            {
-                for (int i = 0; i < str.Length; i++)
                 {
                     if (str[i] != 0)
                     {
@@ -137,12 +120,31 @@ public class UDP_Server_Lan : MonoBehaviour
                     }
                 }
 
-                //Nuevo mensaje
-                Debug.Log("Nuevo mensaje Recibido: " + newMessage2);
+            bool newClient = true;
 
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '\n')
+                {
+                    newClient = false;
+                    break;
+                }
+            }
+
+            if (newClient)
+            {
+                byte[] invitation;
+                invitation = Encoding.ASCII.GetBytes("Can Join");
+                newSocket.SendTo(invitation, invitation.Length, SocketFlags.None, Client);
+                Debug.Log("Recibe el usuario");
+
+                newMessage = "\n>> " + newMessage2 + " joined the chat";
+
+                updateText = true;
+            }
+            else
+            {
                 newMessage = newMessage2;
-                Debug.Log("Nuevo mensaje Recibido: " + newMessage);
-
                 updateText = true;
 
             }
