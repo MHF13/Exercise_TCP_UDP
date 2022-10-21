@@ -5,28 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class ButtonActions : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void UDPClient()
     {
-        
+        SceneManager.LoadScene("UDP_Join Game");
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UDPServer()
     {
-        
+        SceneManager.LoadScene("UDP_Create Game");
     }
 
-
-    public void Client()
+    public void TCPServer()
     {
-        SceneManager.LoadScene("Join Game");
+        SceneManager.LoadScene("TCP_Join Game");
     }
 
-    public void Server()
+    public void TCPClient()
     {
-        SceneManager.LoadScene("Create Game");
+        SceneManager.LoadScene("TCP_Create Game");
     }
-
-
 }
