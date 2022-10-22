@@ -12,7 +12,7 @@ public class TCP_Server_Lan : MonoBehaviour
     int recv;
     byte[] data;
     IPEndPoint ipep;
-    EndPoint clientep;
+    IPEndPoint clientep;
     Socket newSocket;
     Socket client;
 
@@ -21,7 +21,7 @@ public class TCP_Server_Lan : MonoBehaviour
 
     private string userName;
 
-    bool updateText;
+    bool updateText = false;
     string allText; // Chat Actual
     string newMessage; // Mensaje que llega o se escribe
 
@@ -39,13 +39,10 @@ public class TCP_Server_Lan : MonoBehaviour
     void Start()
     {
         data = new byte[1024];
-        ipep = new IPEndPoint(IPAddress.Any, 9050);
+        ipep = new IPEndPoint(IPAddress.Any, 6666);
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        receive = new Thread(Receive);
+        receive = new Thread(ReceiveClients);
         listen = new Thread(Listen);
-
-        newSocket.Bind(ipep);
-        listen.Start();
     }
 
     // Update is called once per frame
@@ -57,15 +54,15 @@ public class TCP_Server_Lan : MonoBehaviour
         }
     }
 
-    public void Receive()
+    public void ReceiveClients()
     {
         while (true)
         {
             string newMessage2 = "";
-            byte[] data = new byte[255];
-            int recv = newSocket.Receive(data);
+            byte[] data = new byte[1024];
+            int recv = client.Receive(data);
 
-            string str = Encoding.ASCII.GetString(data, 0, recv);
+            string str = Encoding.ASCII.GetString(data);
 
             for (int i = 0; i < str.Length; i++)
                 {
@@ -92,9 +89,6 @@ public class TCP_Server_Lan : MonoBehaviour
 
             if (newClient)
             {
-                byte[] invitation;
-                invitation = Encoding.ASCII.GetBytes("Can Join", 0, recv);
-                newSocket.Send(invitation, invitation.Length, SocketFlags.None);
                 Debug.Log("Recibe el usuario");
 
                 newMessage = "\n>> " + newMessage2 + " joined the chat";
@@ -105,7 +99,6 @@ public class TCP_Server_Lan : MonoBehaviour
             {
                 newMessage = newMessage2;
                 updateText = true;
-
             }
         }
     }
@@ -119,8 +112,34 @@ public class TCP_Server_Lan : MonoBehaviour
         client = newSocket.Accept();
         clientep = (IPEndPoint)client.RemoteEndPoint;
 
-        if (client.Connected)
-            receive.Start();
+        receive.Start();
+    }
+
+    public void CreateServer()
+    {
+        newSocket.Bind(ipep);
+        listen.Start();
+
+        userName = userNameText.text;
+
+        //Open Chat
+        joinChatPanel.SetActive(false);
+        theChatPanel.SetActive(true);
+    }
+
+    private void UpdateText()
+    {
+        Debug.Log("Texto Modificado");
+        
+        byte[] data = new byte[255];
+        data = Encoding.ASCII.GetBytes(newMessage);
+        client.Send(data, data.Length, SocketFlags.None);
+
+        Debug.Log("Texto Enviado a Cliente" + newMessage);
+
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
+
+        updateText = false;
     }
 
     public void SendButton()
@@ -135,31 +154,6 @@ public class TCP_Server_Lan : MonoBehaviour
         message.text = "";
 
         updateText = true;
-    }
-
-    public void CreateServer()
-    {
-        userName = userNameText.text;
-
-        //Open Chat
-        joinChatPanel.SetActive(false);
-        theChatPanel.SetActive(true);
-    }
-
-    private void UpdateText()
-    {
-
-        Debug.Log("Texto Modificado");
-        
-        byte[] data = new byte[255];
-        data = Encoding.ASCII.GetBytes(newMessage, 0, recv);
-        newSocket.Send(data, data.Length, SocketFlags.None);
-
-        Debug.Log("Texto Enviado a Cliente" + newMessage);
-
-        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
-
-        updateText = false;
     }
 }
 

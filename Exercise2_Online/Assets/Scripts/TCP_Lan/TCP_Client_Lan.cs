@@ -9,13 +9,12 @@ using TMPro;
 public class TCP_Client_Lan : MonoBehaviour
 {
     byte[] data;
-    public string input, stringData;
+    private string input, stringData;
     int recv;
     IPEndPoint ipep;
-    EndPoint serverEndPoint;
     Socket server;
-    Thread receiver;
-    Thread currentThread;
+    Thread ReceiveThread;
+    Thread CurrentThread;
     public TMP_InputField userNameText;
     public TMP_InputField IpServerText;
 
@@ -42,7 +41,7 @@ public class TCP_Client_Lan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (openChat)
+        if(openChat)
         {
             OpenChat();
         }
@@ -53,25 +52,24 @@ public class TCP_Client_Lan : MonoBehaviour
 
     public void Receiver()
     {
-        byte[] recieve = new byte[255];
-        int recv = server.Receive(recieve);
-        Debug.Log("Invitacion recibida");
+        Debug.Log("Sending Username");
+        server.Send(Encoding.ASCII.GetBytes(userName));
+
         openChat = true;
     }
 
     public void EnterServer()
     {
         data = new byte[1024];
-        ipep = new IPEndPoint(IPAddress.Parse(IpServerText.text), 9050);
+        ipep = new IPEndPoint(IPAddress.Parse(IpServerText.text), 6666);
         server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        serverEndPoint = new IPEndPoint(IPAddress.Parse(IpServerText.text), 8000);
-        receiver = new Thread(Receiver);
+        ReceiveThread = new Thread(Receiver);
 
         try
         {
-            server.Connect(ipep);
             userName = userNameText.text;
-            receiver.Start();
+            server.Connect(ipep);
+            ReceiveThread.Start();
         } catch (SocketException e)
         {
             Debug.Log("Unable to connect to server.");
@@ -80,42 +78,26 @@ public class TCP_Client_Lan : MonoBehaviour
         }
     }
 
-    public void SendButton()
+    private void OpenChat()
     {
-        if(message.text == "") return;
-
-        sendMessage = "\n[" + userName + "]:" + message.text;
-
-        message.text = "";
-
-        Debug.Log("Enviar Texto: "+ sendMessage);
-
-        byte[] data = Encoding.ASCII.GetBytes(sendMessage, 0, recv);
-
-        server.Send(data);
-    }
-
-    public void OpenChat()
-    {
+        Debug.Log("");
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
-        receiver.Abort();
-        currentThread = new Thread(InChat);
-        currentThread.Start();
+        ReceiveThread.Abort();
+        CurrentThread = new Thread(InChat);
+        CurrentThread.Start();
         openChat = false;
     }
 
-    public void InChat()
+    private void InChat()
     {
-        while (true)
+        while(true)
         {
             string newMessage2 = "";
-            byte[] data = new byte[255];
-
-            int rev = server.Receive(data);
-
+            data = new byte[1024];
+            recv = server.Receive(data);
             string newMessage = Encoding.ASCII.GetString(data, 0, recv);
-
+            
             for (int i = 0; i < newMessage.Length; i++)
             {
                 if (newMessage[i] != 0)
@@ -133,7 +115,25 @@ public class TCP_Client_Lan : MonoBehaviour
         }
     }
 
-    private void UpdateText(){
+    public void SendButton()
+    {
+        if(message.text == ""){
+            return;
+        }
+
+        sendMessage = "\n[" + userName + "]:" + message.text;
+
+        message.text = "";
+
+        Debug.Log("Enviar Texto: "+ sendMessage);
+
+        byte[] data = Encoding.ASCII.GetBytes(sendMessage);
+
+        server.Send(data, data.Length, SocketFlags.None);
+    }
+
+    private void UpdateText()
+    {
 
         Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
 
