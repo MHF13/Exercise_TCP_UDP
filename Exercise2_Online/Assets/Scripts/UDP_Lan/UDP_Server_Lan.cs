@@ -14,13 +14,11 @@ public class UDP_Server_Lan : MonoBehaviour
     IPEndPoint ipep;
     EndPoint Client;
 
-    //EndPoint ClientList;
-
     private string userName;
 
     bool updateText;
     string allText; // Chat Actual
-    string newMessage; // Mensage que llega o se escribe
+    string newMessage; // Mensaje que llega o se escribe
 
     //Para el online
     public TMP_InputField userNameText;
@@ -59,8 +57,8 @@ public class UDP_Server_Lan : MonoBehaviour
         }
     }
 
-    private void UpdateText(){
-
+    private void UpdateText()
+    {
         Debug.Log("Texto Modificado");
         
         byte[] data = new byte[255];
@@ -88,7 +86,7 @@ public class UDP_Server_Lan : MonoBehaviour
         updateText = true;
     }
 
-    public void UserNameButton()
+    public void CreateServer()
     {
         userName = userNameText.text;
 

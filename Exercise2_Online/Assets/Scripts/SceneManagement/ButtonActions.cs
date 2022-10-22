@@ -17,11 +17,11 @@ public class ButtonActions : MonoBehaviour
 
     public void TCPServer()
     {
-        SceneManager.LoadScene("TCP_Join Game");
+        SceneManager.LoadScene("TCP_Create Game");
     }
 
     public void TCPClient()
     {
-        SceneManager.LoadScene("TCP_Create Game");
+        SceneManager.LoadScene("TCP_Join Game");
     }
 }

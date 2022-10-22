@@ -5,18 +5,36 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using TMPro;
 
 public class TCP_Server_Lan : MonoBehaviour
 {
     int recv;
     byte[] data;
     IPEndPoint ipep;
-    IPEndPoint clientep;
+    EndPoint clientep;
     Socket newSocket;
     Socket client;
 
     Thread receive;
     Thread listen;
+
+    private string userName;
+
+    bool updateText;
+    string allText; // Chat Actual
+    string newMessage; // Mensaje que llega o se escribe
+
+    public TMP_InputField userNameText;
+
+    [SerializeField]
+    private GameObject joinChatPanel;
+    [SerializeField]
+    private GameObject theChatPanel;
+    [SerializeField]
+    private GameObject OnlineChat;
+    public TMP_InputField message;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,31 +51,63 @@ public class TCP_Server_Lan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (updateText)
+        {
+            UpdateText();
+        }
     }
 
     public void Receive()
     {
-        string welcome = "Welcome to my test server";
-        data = Encoding.ASCII.GetBytes(welcome);
-        client.Send(data, data.Length, SocketFlags.None);
-
         while (true)
         {
-            data = new byte[1024];
-            recv = client.Receive(data);
+            string newMessage2 = "";
+            byte[] data = new byte[255];
+            int recv = newSocket.Receive(data);
 
-            if (recv == 0)
-                break;
+            string str = Encoding.ASCII.GetString(data, 0, recv);
 
-            Debug.Log(Encoding.ASCII.GetString(data, 0, recv));
-            client.Send(data, recv, SocketFlags.None);
+            for (int i = 0; i < str.Length; i++)
+                {
+                    if (str[i] != 0)
+                    {
+                        newMessage2 += str[i];
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+            bool newClient = true;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '\n')
+                {
+                    newClient = false;
+                    break;
+                }
+            }
+
+            if (newClient)
+            {
+                byte[] invitation;
+                invitation = Encoding.ASCII.GetBytes("Can Join", 0, recv);
+                newSocket.Send(invitation, invitation.Length, SocketFlags.None);
+                Debug.Log("Recibe el usuario");
+
+                newMessage = "\n>> " + newMessage2 + " joined the chat";
+
+                updateText = true;
+            }
+            else
+            {
+                newMessage = newMessage2;
+                updateText = true;
+
+            }
         }
-
-        Debug.Log("Disconnected from " + clientep.Address);
-
-        client.Close();
-        newSocket.Close();
     }
 
     public void Listen()
@@ -71,6 +121,45 @@ public class TCP_Server_Lan : MonoBehaviour
 
         if (client.Connected)
             receive.Start();
+    }
+
+    public void SendButton()
+    {
+        if(message.text == ""){
+            return;
+        }
+        newMessage = "";
+        newMessage = "\n[" + userName + "]:" + message.text;
+        Debug.Log("Server envia mensaje: " + newMessage);
+
+        message.text = "";
+
+        updateText = true;
+    }
+
+    public void CreateServer()
+    {
+        userName = userNameText.text;
+
+        //Open Chat
+        joinChatPanel.SetActive(false);
+        theChatPanel.SetActive(true);
+    }
+
+    private void UpdateText()
+    {
+
+        Debug.Log("Texto Modificado");
+        
+        byte[] data = new byte[255];
+        data = Encoding.ASCII.GetBytes(newMessage, 0, recv);
+        newSocket.Send(data, data.Length, SocketFlags.None);
+
+        Debug.Log("Texto Enviado a Cliente" + newMessage);
+
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
+
+        updateText = false;
     }
 }
 

@@ -41,17 +41,7 @@ public class UDP_Client_Lan : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Any, 6799); // IPAddress.Any, puerto del cliente
-        newSocket.Bind(ipep);
-
-        //Server = new IPEndPoint(IPAddress.Parse(IP_Server), 6879); // IP del servidor, puerto del servidor
-        Server = new IPEndPoint(IPAddress.Any, 0);
-
         messages = new List<string>();
-
-        ReciveThread = new Thread(Receiver);
-        ReciveThread.Start();
     }
 
     // Update is called once per frame
@@ -81,9 +71,11 @@ public class UDP_Client_Lan : MonoBehaviour
         updateText = false;
     }
 
-    public void IPUserNameButton()
+    public void EnterServer()
     {
-
+        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        ipep = new IPEndPoint(IPAddress.Any, 6799); // IPAddress.Any, puerto del cliente
+        newSocket.Bind(ipep);
         Server = new IPEndPoint(IPAddress.Parse(IpServerText.text), 8000);
         newSocket.Connect(Server);
 
@@ -93,6 +85,8 @@ public class UDP_Client_Lan : MonoBehaviour
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
+        ReciveThread = new Thread(Receiver);
+        ReciveThread.Start();
     }
 
     public void SendButton()
@@ -118,7 +112,6 @@ public class UDP_Client_Lan : MonoBehaviour
         int rev = newSocket.Receive(recieve);
         Debug.Log("Invitacion recibida");
         openChat = true;
-
     }
 
     private void OpenChat()
