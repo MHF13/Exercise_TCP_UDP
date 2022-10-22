@@ -8,16 +8,18 @@ using System.Text;
 using TMPro;
 public class TCP_Client_Lan : MonoBehaviour
 {
-    byte[] data;
-    private string input, stringData;
+
     int recv;
     IPEndPoint ipep;
     Socket server;
+
     Thread ReceiveThread;
     Thread CurrentThread;
+
     public TMP_InputField userNameText;
     public TMP_InputField IpServerText;
 
+    //Panels
     [SerializeField]
     private GameObject joinChatPanel;
     [SerializeField]
@@ -25,17 +27,16 @@ public class TCP_Client_Lan : MonoBehaviour
     [SerializeField]
     private GameObject OnlineChat;
 
-    public TMP_InputField message;
+    public TMP_InputField messageField;
 
     bool openChat = false;
     bool updateText = false;
-    string sendMessage;
-    List<string> messages;
-    private string userName;
+
+    private string userName, newMessage;
 
     void Start()
     {
-        messages = new List<string>();
+        newMessage = "";
     }
 
     // Update is called once per frame
@@ -50,17 +51,18 @@ public class TCP_Client_Lan : MonoBehaviour
         }
     }
 
-    public void Receiver()
+    private void UpdateText()
     {
-        Debug.Log("Sending Username");
-        server.Send(Encoding.ASCII.GetBytes(userName));
+        Debug.Log("Modified text");
 
-        openChat = true;
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
+
+        updateText = false;
     }
 
     public void EnterServer()
     {
-        data = new byte[1024];
+        byte[] data = new byte[1024];
         ipep = new IPEndPoint(IPAddress.Parse(IpServerText.text), 6666);
         server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         ReceiveThread = new Thread(Receiver);
@@ -80,7 +82,7 @@ public class TCP_Client_Lan : MonoBehaviour
 
     private void OpenChat()
     {
-        Debug.Log("");
+
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
         ReceiveThread.Abort();
@@ -89,62 +91,48 @@ public class TCP_Client_Lan : MonoBehaviour
         openChat = false;
     }
 
-    private void InChat()
+    public void Receiver()
     {
-        while(true)
-        {
-            string newMessage2 = "";
-            data = new byte[1024];
-            recv = server.Receive(data);
-            string newMessage = Encoding.ASCII.GetString(data, 0, recv);
-            
-            for (int i = 0; i < newMessage.Length; i++)
-            {
-                if (newMessage[i] != 0)
-                {
-                    newMessage2 += newMessage[i];
-                }
-                else
-                {
-                    break;
-                }
-            }
+        Debug.Log("Sending Username");
+        server.Send(Encoding.ASCII.GetBytes(userName));
 
-            messages.Add(newMessage2);
-            updateText = true;
-        }
+        openChat = true;
     }
 
     public void SendButton()
     {
-        if(message.text == ""){
-            return;
-        }
+        if(messageField.text == "") return;
 
-        sendMessage = "\n[" + userName + "]:" + message.text;
+        newMessage = "\n[" + userName + "]:" + messageField.text;
 
-        message.text = "";
+        messageField.text = "";
 
-        Debug.Log("Enviar Texto: "+ sendMessage);
+        Debug.Log("Message has been sent");
 
-        byte[] data = Encoding.ASCII.GetBytes(sendMessage);
+        byte[] data = Encoding.ASCII.GetBytes(newMessage);
 
         server.Send(data, data.Length, SocketFlags.None);
     }
 
-    private void UpdateText()
+    private void InChat()
     {
+        while(true)
+        {
 
-        Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
+            byte[] data = new byte[1024];
+            recv = server.Receive(data);
 
-        Debug.Log("Este deveria ser el nuevo texto");
-        Debug.Log(OnlineChat.GetComponent<TextMeshProUGUI>().text + messages[messages.Count - 1]);
+            newMessage = "";
+            string reciveMessage = Encoding.ASCII.GetString(data, 0, recv);
 
-        OnlineChat.GetComponent<TextMeshProUGUI>().text += messages[messages.Count - 1];
-
-        Debug.Log("Texto despues\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
-
-        updateText = false;
+            for (int i = 0; i < reciveMessage.Length; i++)
+            {
+                if (reciveMessage[i] != 0) { newMessage += reciveMessage[i]; }
+                else break;
+            }
+            updateText = true;
+        }
     }
+
 }
 

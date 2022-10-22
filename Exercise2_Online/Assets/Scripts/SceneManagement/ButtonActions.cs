@@ -24,4 +24,10 @@ public class ButtonActions : MonoBehaviour
     {
         SceneManager.LoadScene("TCP_Join Game");
     }
+
+    public void BackSelector()
+    {
+        SceneManager.LoadScene("Selector");
+    }
+
 }

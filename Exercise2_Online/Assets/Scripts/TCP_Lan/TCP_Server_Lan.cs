@@ -9,8 +9,7 @@ using TMPro;
 
 public class TCP_Server_Lan : MonoBehaviour
 {
-    int recv;
-    byte[] data;
+
     IPEndPoint ipep;
     IPEndPoint clientep;
     Socket newSocket;
@@ -18,12 +17,6 @@ public class TCP_Server_Lan : MonoBehaviour
 
     Thread receive;
     Thread listen;
-
-    private string userName;
-
-    bool updateText = false;
-    string allText; // Chat Actual
-    string newMessage; // Mensaje que llega o se escribe
 
     public TMP_InputField userNameText;
 
@@ -33,12 +26,18 @@ public class TCP_Server_Lan : MonoBehaviour
     private GameObject theChatPanel;
     [SerializeField]
     private GameObject OnlineChat;
+
     public TMP_InputField message;
+
+    bool updateText;
+
+    private string userName, newMessage;
 
     // Start is called before the first frame update
     void Start()
     {
-        data = new byte[1024];
+        newMessage = "";
+        byte[] data = new byte[1024];
         ipep = new IPEndPoint(IPAddress.Any, 6666);
         newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         receive = new Thread(ReceiveClients);
@@ -54,53 +53,17 @@ public class TCP_Server_Lan : MonoBehaviour
         }
     }
 
-    public void ReceiveClients()
+    private void UpdateText()
     {
-        while (true)
-        {
-            string newMessage2 = "";
-            byte[] data = new byte[1024];
-            int recv = client.Receive(data);
+        Debug.Log("Modified text");
+        
+        byte[] data = new byte[255];
+        data = Encoding.ASCII.GetBytes(newMessage);
+        client.Send(data, data.Length, SocketFlags.None);
 
-            string str = Encoding.ASCII.GetString(data);
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
 
-            for (int i = 0; i < str.Length; i++)
-                {
-                    if (str[i] != 0)
-                    {
-                        newMessage2 += str[i];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-            bool newClient = true;
-
-            for (int i = 0; i < str.Length; i++)
-            {
-                if (str[i] == '\n')
-                {
-                    newClient = false;
-                    break;
-                }
-            }
-
-            if (newClient)
-            {
-                Debug.Log("Recibe el usuario");
-
-                newMessage = "\n>> " + newMessage2 + " joined the chat";
-
-                updateText = true;
-            }
-            else
-            {
-                newMessage = newMessage2;
-                updateText = true;
-            }
-        }
+        updateText = false;
     }
 
     public void Listen()
@@ -115,6 +78,17 @@ public class TCP_Server_Lan : MonoBehaviour
         receive.Start();
     }
 
+    public void SendButton()
+    {
+        if (message.text == "") return;
+
+        newMessage = "\n[" + userName + "]:" + message.text;
+
+        message.text = "";
+
+        updateText = true;
+    }
+
     public void CreateServer()
     {
         newSocket.Bind(ipep);
@@ -127,33 +101,44 @@ public class TCP_Server_Lan : MonoBehaviour
         theChatPanel.SetActive(true);
     }
 
-    private void UpdateText()
+    public void ReceiveClients()
     {
-        Debug.Log("Texto Modificado");
-        
-        byte[] data = new byte[255];
-        data = Encoding.ASCII.GetBytes(newMessage);
-        client.Send(data, data.Length, SocketFlags.None);
+        while (true)
+        {
+            byte[] data = new byte[255]; 
+            int recv = client.Receive(data);
 
-        Debug.Log("Texto Enviado a Cliente" + newMessage);
+            string str = Encoding.ASCII.GetString(data);
 
-        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] != 0) { newMessage += str[i]; }
+                else break;
 
-        updateText = false;
-    }
+            }
 
-    public void SendButton()
-    {
-        if(message.text == ""){
-            return;
+            bool newClient = true;
+
+            for (int i = 0; i < newMessage.Length; i++)
+            {
+                if (newMessage[i] == '\n')
+                {
+                    newClient = false;
+                    break;
+                }
+            }
+
+            if (newClient)
+            {
+                Debug.Log("Receives a user");
+
+                newMessage = "\n>> " + newMessage + " joined the chat";
+
+            }
+
+            updateText = true;
         }
-        newMessage = "";
-        newMessage = "\n[" + userName + "]:" + message.text;
-        Debug.Log("Server envia mensaje: " + newMessage);
-
-        message.text = "";
-
-        updateText = true;
     }
+
 }
 

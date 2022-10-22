@@ -14,13 +14,6 @@ public class UDP_Server_Lan : MonoBehaviour
     IPEndPoint ipep;
     EndPoint Client;
 
-    private string userName;
-
-    bool updateText;
-    string allText; // Chat Actual
-    string newMessage; // Mensaje que llega o se escribe
-
-    //Para el online
     public TMP_InputField userNameText;
 
     [SerializeField]
@@ -31,6 +24,10 @@ public class UDP_Server_Lan : MonoBehaviour
     private GameObject OnlineChat;
 
     public TMP_InputField message;
+
+    bool updateText;
+
+    private string userName, newMessage;
 
     // Start is called before the first frame update
     void Start()
@@ -59,13 +56,11 @@ public class UDP_Server_Lan : MonoBehaviour
 
     private void UpdateText()
     {
-        Debug.Log("Texto Modificado");
-        
+        Debug.Log("Modified text");
+
         byte[] data = new byte[255];
         data = Encoding.ASCII.GetBytes(newMessage);
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
-
-        Debug.Log("Texto Enviado a Cliente" + newMessage);
 
         OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
 
@@ -74,12 +69,9 @@ public class UDP_Server_Lan : MonoBehaviour
 
     public void SendButton()
     {
-        if(message.text == ""){
-            return;
-        }
-        newMessage = "";
+        if(message.text == "") return;
+        
         newMessage = "\n[" + userName + "]:" + message.text;
-        Debug.Log("Server envia mensaje: " + newMessage);
 
         message.text = "";
 
@@ -100,29 +92,23 @@ public class UDP_Server_Lan : MonoBehaviour
     {
         while (true)
         {
-            string newMessage2 = "";
             byte[] data = new byte[255];
             int recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);
 
             for (int i = 0; i < str.Length; i++)
-                {
-                    if (str[i] != 0)
-                    {
-                        newMessage2 += str[i];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+            {
+                if (str[i] != 0) { newMessage += str[i]; }
+                else break;
+
+            }
 
             bool newClient = true;
 
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < newMessage.Length; i++)
             {
-                if (str[i] == '\n')
+                if (newMessage[i] == '\n')
                 {
                     newClient = false;
                     break;
@@ -131,21 +117,19 @@ public class UDP_Server_Lan : MonoBehaviour
 
             if (newClient)
             {
+                Debug.Log("Receives a user");
+
                 byte[] invitation;
                 invitation = Encoding.ASCII.GetBytes("Can Join");
                 newSocket.SendTo(invitation, invitation.Length, SocketFlags.None, Client);
-                Debug.Log("Recibe el usuario");
 
-                newMessage = "\n>> " + newMessage2 + " joined the chat";
-
-                updateText = true;
-            }
-            else
-            {
-                newMessage = newMessage2;
-                updateText = true;
+                newMessage = "\n>> " + newMessage + " joined the chat";
 
             }
+
+            updateText = true;
+
         }
     }
+
 }

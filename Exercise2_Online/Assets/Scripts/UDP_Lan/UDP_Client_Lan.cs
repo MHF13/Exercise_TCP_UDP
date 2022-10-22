@@ -10,15 +10,18 @@ using System.Threading;
 
 public class UDP_Client_Lan : MonoBehaviour
 {
+
     Socket newSocket;
     IPEndPoint ipep;
     EndPoint Server;
-    private string userName;
 
-    //Para el online
+    Thread CurrentThread;
+    Thread ReceiveThread;
+
     public TMP_InputField userNameText;
     public TMP_InputField IpServerText;
 
+    //Panels
     [SerializeField]
     private GameObject joinChatPanel;
     [SerializeField]
@@ -26,22 +29,17 @@ public class UDP_Client_Lan : MonoBehaviour
     [SerializeField]
     private GameObject OnlineChat;
 
-    public TMP_InputField message;
+    public TMP_InputField messageField;
 
     bool openChat = false;
     bool updateText = false;
-    Thread CurrentThread;
-    Thread ReciveThread;
 
-    string sendMessage;
-
-    List<string> messages;
-    //static string newMessage;
+    private string userName, newMessage;
 
     // Start is called before the first frame update
     void Start()
     {
-        messages = new List<string>();
+        newMessage = "";
     }
 
     // Update is called once per frame
@@ -59,14 +57,9 @@ public class UDP_Client_Lan : MonoBehaviour
 
     private void UpdateText(){
 
-        Debug.Log("Texto antes\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
+        Debug.Log("Modified text");
 
-        Debug.Log("Este deveria ser el nuevo texto");
-        Debug.Log(OnlineChat.GetComponent<TextMeshProUGUI>().text + messages[messages.Count - 1]);
-
-        OnlineChat.GetComponent<TextMeshProUGUI>().text += messages[messages.Count - 1];
-
-        Debug.Log("Texto despues\n" + OnlineChat.GetComponent<TextMeshProUGUI>().text);
+        OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
 
         updateText = false;
     }
@@ -85,25 +78,18 @@ public class UDP_Client_Lan : MonoBehaviour
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
 
-        ReciveThread = new Thread(Receiver);
-        ReciveThread.Start();
+        ReceiveThread = new Thread(Receiver);
+        ReceiveThread.Start();
     }
 
-    public void SendButton()
+    private void OpenChat()
     {
-        if(message.text == ""){
-            return;
-        }
-
-        sendMessage = "\n[" + userName + "]:" + message.text;
-
-        message.text = "";
-
-        Debug.Log("Enviar Texto: "+ sendMessage);
-
-        byte[] data = Encoding.ASCII.GetBytes(sendMessage);
-
-        newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
+        joinChatPanel.SetActive(false);
+        theChatPanel.SetActive(true);
+        ReceiveThread.Abort();
+        CurrentThread = new Thread(InChat);
+        CurrentThread.Start();
+        openChat = false;
     }
 
     private void Receiver()
@@ -114,14 +100,19 @@ public class UDP_Client_Lan : MonoBehaviour
         openChat = true;
     }
 
-    private void OpenChat()
+    public void SendButton()
     {
-        joinChatPanel.SetActive(false);
-        theChatPanel.SetActive(true);
-        ReciveThread.Abort();
-        CurrentThread = new Thread(InChat);
-        CurrentThread.Start();
-        openChat = false;
+        if(messageField.text == "") return;
+
+        newMessage = "\n[" + userName + "]:" + messageField.text;
+
+        messageField.text = "";
+
+        Debug.Log("Message has been sent");
+
+        byte[] data = Encoding.ASCII.GetBytes(newMessage);
+
+        newSocket.SendTo(data, data.Length, SocketFlags.None, Server);
     }
 
     private void InChat()
@@ -129,30 +120,23 @@ public class UDP_Client_Lan : MonoBehaviour
 
         while (true)
         {
-            string newMessage2 = "";
+
             byte[] data = new byte[255];
 
             int rev = newSocket.ReceiveFrom(data,ref Server);
 
-            string newMessage = Encoding.ASCII.GetString(data);
+            newMessage = "";
 
-            for (int i = 0; i < newMessage.Length; i++)
+            string reciveMessage = Encoding.ASCII.GetString(data);
+
+            for (int i = 0; i < reciveMessage.Length; i++)
             {
-                if (newMessage[i] != 0)
-                {
-                    newMessage2 += newMessage[i];
-                }
-                else
-                {
-                    break;
-                }
+                if (reciveMessage[i] != 0) { newMessage += reciveMessage[i]; }
+                else break;
             }
 
-            messages.Add(newMessage2);
             updateText = true;
         }
     }
-
-
 
 }
