@@ -96,7 +96,6 @@ public class UDP_Client_Lan : MonoBehaviour
     {
         byte[] recieve = new byte[255];
         int rev = newSocket.Receive(recieve);
-        Debug.Log("Invitacion recibida");
         openChat = true;
     }
 
@@ -109,7 +108,7 @@ public class UDP_Client_Lan : MonoBehaviour
         messageField.text = "";
 
         Debug.Log("Message has been sent");
-
+        
         byte[] data = Encoding.ASCII.GetBytes(newMessage);
 
         newSocket.SendTo(data, data.Length, SocketFlags.None, Server);

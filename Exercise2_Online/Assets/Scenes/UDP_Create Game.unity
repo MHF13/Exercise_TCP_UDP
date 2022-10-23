@@ -1587,7 +1587,7 @@ GameObject:
   - component: {fileID: 955357482}
   - component: {fileID: 955357481}
   m_Layer: 5
-  m_Name: Chat
+  m_Name: The Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1719,7 +1719,7 @@ GameObject:
   - component: {fileID: 1244288278}
   - component: {fileID: 1244288277}
   m_Layer: 5
-  m_Name: OnlineChat
+  m_Name: Online Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2428,7 +2428,7 @@ GameObject:
   - component: {fileID: 2006791780}
   - component: {fileID: 2006791779}
   m_Layer: 5
-  m_Name: Message
+  m_Name: Message Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

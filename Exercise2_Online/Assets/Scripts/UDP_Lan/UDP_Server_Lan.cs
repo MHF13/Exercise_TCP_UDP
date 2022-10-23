@@ -9,7 +9,7 @@ using System.Threading;
 
 public class UDP_Server_Lan : MonoBehaviour
 {
-    
+
     Socket newSocket;
     IPEndPoint ipep;
     EndPoint Client;
@@ -29,23 +29,6 @@ public class UDP_Server_Lan : MonoBehaviour
 
     private string userName, newMessage;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        ipep = new IPEndPoint(IPAddress.Any, 8000); // un puerto para el host, IPAddress.Any
-        newSocket.Bind(ipep);
-
-        // inicializar Client
-        IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-        Client = (EndPoint)(sender);
-
-        Thread thread = new Thread(ReceieveClients);
-
-        thread.Start();
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (updateText)
@@ -59,7 +42,9 @@ public class UDP_Server_Lan : MonoBehaviour
         Debug.Log("Modified text");
 
         byte[] data = new byte[255];
+
         data = Encoding.ASCII.GetBytes(newMessage);
+
         newSocket.SendTo(data, data.Length, SocketFlags.None, Client);
 
         OnlineChat.GetComponent<TextMeshProUGUI>().text += newMessage;
@@ -80,12 +65,28 @@ public class UDP_Server_Lan : MonoBehaviour
 
     public void CreateServer()
     {
-        userName = userNameText.text;
+        Socketing();
 
+        userName = userNameText.text;
         //Open Chat
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
 
+    }
+
+    private void Socketing()
+    {
+        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        ipep = new IPEndPoint(IPAddress.Any, 8000); // un puerto para el host, IPAddress.Any
+        newSocket.Bind(ipep);
+
+        // inicializar Client
+        IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+        Client = (EndPoint)(sender);
+
+        Thread thread = new Thread(ReceieveClients);
+
+        thread.Start();
     }
 
     private void ReceieveClients()
@@ -96,6 +97,8 @@ public class UDP_Server_Lan : MonoBehaviour
             int recv = newSocket.ReceiveFrom(data, ref Client);
 
             string str = Encoding.ASCII.GetString(data);
+            
+            newMessage = "";
 
             for (int i = 0; i < str.Length; i++)
             {

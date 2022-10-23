@@ -760,7 +760,6 @@ RectTransform:
   - {fileID: 135932783}
   - {fileID: 1085597075}
   - {fileID: 677084317}
-  - {fileID: 1254187184}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -929,7 +928,7 @@ GameObject:
   - component: {fileID: 677084319}
   - component: {fileID: 677084318}
   m_Layer: 5
-  m_Name: Chat
+  m_Name: The Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1253,9 +1252,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2133688043}
+  - {fileID: 1254187184}
   - {fileID: 1062911562}
   - {fileID: 661866112}
+  - {fileID: 2133688043}
   m_Father: {fileID: 507440558}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1531,11 +1531,11 @@ RectTransform:
   m_GameObject: {fileID: 1254187183}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.4859331, y: 1.4859331, z: 0.9906282}
+  m_LocalScale: {x: 1.4859332, y: 1.4859332, z: 0.9906283}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 507440558}
-  m_RootOrder: 3
+  m_Father: {fileID: 1085597075}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1786,7 +1786,7 @@ GameObject:
   - component: {fileID: 1865022657}
   - component: {fileID: 1865022656}
   m_Layer: 5
-  m_Name: OnlineChat
+  m_Name: Online Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2138,7 +2138,7 @@ GameObject:
   - component: {fileID: 2013981744}
   - component: {fileID: 2013981743}
   m_Layer: 5
-  m_Name: Message
+  m_Name: Message Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2743,7 +2743,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6477982524531187738, guid: ca57abf342e54e345a257eb371a8fe84, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6477982524531187738, guid: ca57abf342e54e345a257eb371a8fe84, type: 3}
       propertyPath: m_AnchorMax.x

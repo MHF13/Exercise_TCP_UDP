@@ -82,7 +82,6 @@ public class TCP_Client_Lan : MonoBehaviour
 
     private void OpenChat()
     {
-
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
         ReceiveThread.Abort();

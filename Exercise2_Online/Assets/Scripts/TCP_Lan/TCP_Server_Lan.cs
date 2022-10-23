@@ -11,7 +11,6 @@ public class TCP_Server_Lan : MonoBehaviour
 {
 
     IPEndPoint ipep;
-    IPEndPoint clientep;
     Socket newSocket;
     Socket client;
 
@@ -33,18 +32,6 @@ public class TCP_Server_Lan : MonoBehaviour
 
     private string userName, newMessage;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        newMessage = "";
-        byte[] data = new byte[1024];
-        ipep = new IPEndPoint(IPAddress.Any, 6666);
-        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        receive = new Thread(ReceiveClients);
-        listen = new Thread(Listen);
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (updateText)
@@ -73,7 +60,6 @@ public class TCP_Server_Lan : MonoBehaviour
         Debug.Log("Waiting for a client...");
 
         client = newSocket.Accept();
-        clientep = (IPEndPoint)client.RemoteEndPoint;
 
         receive.Start();
     }
@@ -91,14 +77,25 @@ public class TCP_Server_Lan : MonoBehaviour
 
     public void CreateServer()
     {
-        newSocket.Bind(ipep);
-        listen.Start();
+        Socketing();
 
         userName = userNameText.text;
 
         //Open Chat
         joinChatPanel.SetActive(false);
         theChatPanel.SetActive(true);
+    }
+
+    private void Socketing()
+    {
+
+        ipep = new IPEndPoint(IPAddress.Any, 6666);
+        newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        receive = new Thread(ReceiveClients);
+        listen = new Thread(Listen);
+
+        newSocket.Bind(ipep);
+        listen.Start();
     }
 
     public void ReceiveClients()
@@ -109,6 +106,7 @@ public class TCP_Server_Lan : MonoBehaviour
             int recv = client.Receive(data);
 
             string str = Encoding.ASCII.GetString(data);
+            newMessage = "";
 
             for (int i = 0; i < str.Length; i++)
             {
